@@ -3,9 +3,10 @@ from django.db import models
 
 class Event(models.Model):
     TYPE_BUTTON_PRESS_LIST = [('bp' + str(n), 'Button ' + str(n) + ' pressed') for n in range(1, 11)]
-    TYPE_LEASE = 'ls'
+    TYPE_COMBINATION_STARTED = 'st'
     TYPE_COMBINATION_FINISHED = 'fn'
     _TYPE_CHOICES = [
+                        (TYPE_COMBINATION_STARTED, 'Combination started'),
                         (TYPE_COMBINATION_FINISHED, 'Combination finished'),
                     ] + TYPE_BUTTON_PRESS_LIST
 
