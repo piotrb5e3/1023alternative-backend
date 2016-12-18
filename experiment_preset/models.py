@@ -2,7 +2,7 @@ from django.db import models
 from django.core.validators import MinValueValidator
 
 
-class ExperimentSettings(models.Model):
+class ExperimentPreset(models.Model):
     TIMEOUT_FIXED = 'fixed'
     TIMEOUT_RESPONSIVE = 'responsive'
 
@@ -11,7 +11,7 @@ class ExperimentSettings(models.Model):
 
     name = models.CharField(unique=True, max_length=255)
 
-    timeout_mode = models.CharField(
+    timeoutmode = models.CharField(
         choices=(
             (TIMEOUT_FIXED, 'Fixed'),
             (TIMEOUT_RESPONSIVE, 'Responsive'),
@@ -19,13 +19,13 @@ class ExperimentSettings(models.Model):
         max_length=30
     )
 
-    timeout_value = models.IntegerField(
+    timeoutvalue = models.IntegerField(
         validators=(
             MinValueValidator(0),
         )
     )
 
-    feedback_mode = models.CharField(
+    feedbackmode = models.CharField(
         choices=(
             (FEEDBACK_NONE, 'None'),
             (FEEDBACK_NEGATIVE_AUDIO, 'Audio on error'),
@@ -33,7 +33,7 @@ class ExperimentSettings(models.Model):
         max_length=30
     )
 
-    repeats_count = models.IntegerField(
+    repeatscount = models.IntegerField(
         validators=(
             MinValueValidator(0),
         )

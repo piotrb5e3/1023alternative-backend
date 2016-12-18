@@ -24,7 +24,7 @@ SECRET_KEY = '(_nenp@vgc=+-k3yl)8xlz=$2n2ggep0=&_i7r%@=(6jd1m3n&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost']
 
 CORS_ORIGIN_ALLOW_ALL = True
 
@@ -39,7 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'experiment',
-    'experiment_settings',
+    'experiment_preset',
+    'experiment_session',
+    'experiment_event',
 ]
 
 MIDDLEWARE = [
@@ -51,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 ]
 
 ROOT_URLCONF = 'alternatives.urls'
@@ -118,3 +121,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+
+REST_FRAMEWORK = {
+    "DEFAULT_RENDERER_CLASSES": (
+        "rest_framework_jsonapi.renderers.JsonApiRenderer",
+    ),
+    "DEFAULT_PARSER_CLASSES": (
+        "rest_framework_jsonapi.parsers.JsonApiParser",
+    ),
+}
