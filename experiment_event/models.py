@@ -17,4 +17,4 @@ class Event(models.Model):
     time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.TYPE_BUTTON_PRESS_MAP[self.eventtype]
+        return str(self.combination) + ' - ' + str(self.eventtype)

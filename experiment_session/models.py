@@ -21,7 +21,7 @@ class ExperimentSession(models.Model):
         return self.combinations.filter(status=Combination.STATUS_FINISHED).count() / 1023
 
     def __str__(self):
-        return str(self.number)
+        return str(self.experiment) + ' [' + str(self.number) + ']'
 
     class Meta:
         unique_together = ('experiment', 'number',)
@@ -46,7 +46,7 @@ class Combination(models.Model):
     user = models.CharField(max_length=128)
 
     def __str__(self):
-        return str(self.lightset)
+        return str(self.session) + ' : ' + str(self.lightset)
 
     class Meta:
         unique_together = ('session', 'lightset')
