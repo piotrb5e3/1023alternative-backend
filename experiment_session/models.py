@@ -10,7 +10,7 @@ class ExperimentSession(models.Model):
         (STATUS_IN_PROGRESS, "In progress"),
     )
 
-    experiment = models.ForeignKey('experiment.Experiment', related_name='sessions')
+    experiment = models.ForeignKey('experiment.Experiment', related_name='sessions', null=False)
     status = models.CharField(max_length=1, default=STATUS_IN_PROGRESS, choices=_STATUS_CHOICES)
     number = models.IntegerField(validators=(MinValueValidator(1),))
 
@@ -33,7 +33,7 @@ class Combination(models.Model):
         (STATUS_IN_PROGRESS, "In progress"),
     )
 
-    session = models.ForeignKey(ExperimentSession, related_name='combinations')
+    session = models.ForeignKey(ExperimentSession, related_name='combinations', null=False)
     status = models.CharField(max_length=1, default=STATUS_IN_PROGRESS, choices=_STATUS_CHOICES)
     lightset = models.IntegerField(
         validators=(

@@ -10,7 +10,8 @@ class Event(models.Model):
                     ] + [(k, v) for k, v in TYPE_BUTTON_PRESS_MAP.items()]
 
     combination = models.ForeignKey('experiment_session.Combination',
-                                    related_name='events')
+                                    related_name='events',
+                                    null=False)
     eventtype = models.CharField(max_length=16, choices=_TYPE_CHOICES)
     time = models.DateTimeField(auto_now_add=True)
 

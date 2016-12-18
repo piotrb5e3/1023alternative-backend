@@ -19,7 +19,7 @@ class Experiment(models.Model):
         return self.settings.repeatsCount
 
     name = models.CharField(max_length=255, unique=True)
-    settings = models.ForeignKey(ExperimentPreset, on_delete=models.PROTECT)
+    settings = models.ForeignKey(ExperimentPreset, on_delete=models.PROTECT, null=False)
     createdon = models.DateTimeField(auto_now_add=True, editable=False)
     finishedon = models.DateTimeField(blank=True, null=True)
     status = models.CharField(max_length=15, choices=_STATUS_CHOICES, default=STATUS_PENDING)
