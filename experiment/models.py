@@ -10,7 +10,7 @@ class Experiment(models.Model):
     STATUS_ARCHIVED = 'archived'
     _STATUS_CHOICES = (
         (STATUS_PENDING, 'Pending'),
-        (STATUS_ACTIVE, 'Finished'),
+        (STATUS_FINISHED, 'Finished'),
         (STATUS_ACTIVE, 'Active'),
         (STATUS_ARCHIVED, 'Archived')
     )
