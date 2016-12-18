@@ -7,8 +7,8 @@ from experiment_preset.serializers import ExperimentPresetSerializer
 class ExperimentSerializer(serializers.ModelSerializer):
     class Meta(object):
         model = Experiment
-        fields = ('id', 'name', 'settings', 'createdon', 'status', 'sessions',)
-        read_only = ('createdon', 'sessions', 'status',)
+        fields = ('id', 'name', 'settings', 'createdon', 'status', 'sessions', 'startedon', 'finishedon',)
+        read_only = ('createdon', 'sessions', 'status', 'startedon', 'finishedon')
         include = {
             'sessions': ExperimentSessionSerializer(),
             'settings': ExperimentPresetSerializer()
