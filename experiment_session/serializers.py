@@ -16,8 +16,8 @@ class CombinationSerializer(ModelSerializer):
 class ExperimentSessionSerializer(ModelSerializer):
     class Meta:
         model = ExperimentSession
-        fields = ('id', 'experiment', 'status', 'combinations', 'number', 'progress')
-        read_only_fields = ('id', 'progress',)
+        fields = ('id', 'experiment', 'status', 'combinations', 'number', 'progress', 'startedon', 'finishedon',)
+        read_only_fields = ('progress', 'startedon', 'finishedon',)
         include = {
             'combinations': CombinationSerializer()
         }

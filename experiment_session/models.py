@@ -13,6 +13,8 @@ class ExperimentSession(models.Model):
     experiment = models.ForeignKey('experiment.Experiment', related_name='sessions', null=False)
     status = models.CharField(max_length=1, default=STATUS_IN_PROGRESS, choices=_STATUS_CHOICES)
     number = models.IntegerField(validators=(MinValueValidator(1),))
+    startedon = models.DateTimeField(auto_now_add=True, editable=False)
+    finishedon = models.DateTimeField(blank=True, null=True)
 
     @property
     def progress(self):
