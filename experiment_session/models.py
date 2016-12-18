@@ -3,9 +3,6 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class ExperimentSession(models.Model):
-    class Meta:
-        unique_together = ('experiment', 'number',)
-
     STATUS_FINISHED = 'F'
     STATUS_IN_PROGRESS = 'P'
     _STATUS_CHOICES = (
@@ -20,6 +17,12 @@ class ExperimentSession(models.Model):
     @property
     def progress(self):
         return self.combinations.filter(status=Combination.STATUS_FINISHED).count() / 1023
+
+    def __str__(self):
+        return str(self.number)
+
+    class Meta:
+        unique_together = ('experiment', 'number',)
 
 
 class Combination(models.Model):
@@ -38,6 +41,9 @@ class Combination(models.Model):
             MaxValueValidator(1023)
         )
     )
+
+    def __str__(self):
+        return str(self.lightset)
 
     class Meta:
         unique_together = ('session', 'lightset')

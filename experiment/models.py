@@ -34,3 +34,6 @@ class Experiment(models.Model):
     @property
     def progress(self):
         return self.sessions_done / self.settings.repeatsCount
+
+    def __str__(self):
+        return self.name

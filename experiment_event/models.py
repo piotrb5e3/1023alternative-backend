@@ -13,3 +13,6 @@ class Event(models.Model):
                                     related_name='events')
     eventtype = models.CharField(max_length=16, choices=_TYPE_CHOICES)
     time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.TYPE_BUTTON_PRESS_MAP[self.eventtype]
