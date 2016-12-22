@@ -43,7 +43,7 @@ class Repeat(models.Model):
     number = models.IntegerField()
 
     def __str__(self):
-        return str(self.session + '[' + str(number) + ']')
+        return str(self.session) + '[' + str(self.number) + ']'
 
     class Meta:
         unique_together = ('session', 'number')
@@ -58,7 +58,6 @@ class Combination(models.Model):
             MaxValueValidator(1023)
         )
     )
-    user = models.CharField(max_length=128)
 
     def __str__(self):
         return str(self.repeat) + ' : ' + str(self.lightset)
