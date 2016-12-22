@@ -25,6 +25,7 @@ class ExperimentSession(models.Model):
     username = models.CharField(max_length=265, null=True, blank=True)
     userage = models.IntegerField(blank=True, null=True, validators=(MinValueValidator(1),))
     usersex = models.CharField(blank=True, null=True, choices=_SEX_CHOICES, max_length=1)
+    userpass = models.CharField(max_length=30)
 
     @property
     def progress(self):

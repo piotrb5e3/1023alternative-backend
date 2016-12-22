@@ -7,5 +7,5 @@ class ExperimentSessionSerializer(ModelSerializer):
     class Meta:
         model = ExperimentSession
         fields = ('id', 'experiment', 'status', 'userid', 'username', 'userage', 'usersex',
-                  'progress', 'startedon', 'finishedon',)
+                  'userpass', 'progress', 'startedon', 'finishedon',)
         read_only_fields = ('progress',)
