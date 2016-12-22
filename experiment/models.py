@@ -1,40 +1,44 @@
 from django.db import models
-from experiment_preset.models import ExperimentPreset
 from experiment_session.models import ExperimentSession
+from django.core.validators import MinValueValidator
 
 
 class Experiment(models.Model):
-    STATUS_PENDING = 'pending'
-    STATUS_ACTIVE = 'active'
-    STATUS_FINISHED = 'finished'
-    STATUS_ARCHIVED = 'archived'
-    _STATUS_CHOICES = (
-        (STATUS_PENDING, 'Pending'),
-        (STATUS_FINISHED, 'Finished'),
-        (STATUS_ACTIVE, 'Active'),
-        (STATUS_ARCHIVED, 'Archived')
+    LIGHTOFF_FIXED = 'fixed'
+    LIGHTOFF_WAITING = 'waiting'
+    _LIGHTOFF_CHOICES = (
+        (LIGHTOFF_FIXED, 'Fixed'),
+        (LIGHTOFF_WAITING, 'Waiting')
     )
 
-    def initial_sessions_left(self):
-        return self.settings.repeatsCount
+    AUDIO_NONE = 'none'
+    AUDIO_BEEP = 'beep'
+    _AUDIO_CHOICES = (
+        (AUDIO_NONE, 'None'),
+        (AUDIO_BEEP, 'Audible beep on error')
+    )
 
-    name = models.CharField(max_length=255, unique=True)
-    settings = models.ForeignKey(ExperimentPreset, on_delete=models.PROTECT, null=False)
+    name = models.CharField(unique=True, max_length=255)
+
+    lightoffmode = models.CharField(
+        choices=_LIGHTOFF_CHOICES,
+        max_length=30
+    )
+
+    lightofftimeout = models.IntegerField(validators=(MinValueValidator(0),))
+
+    audiomode = models.CharField(
+        choices=_AUDIO_CHOICES,
+        max_length=30
+    )
+
+    repeatscount = models.IntegerField(
+        validators=(
+            MinValueValidator(1),
+        )
+    )
+
     createdon = models.DateTimeField(auto_now_add=True, editable=False)
-    startedon = models.DateTimeField(blank=True, null=True)
-    finishedon = models.DateTimeField(blank=True, null=True)
-    status = models.CharField(max_length=15, choices=_STATUS_CHOICES, default=STATUS_PENDING)
-
-    @property
-    def sessions_done(self):
-        return (ExperimentSession
-                .objects
-                .filter(experiment=self, status=ExperimentSession.STATUS_FINISHED)
-                .count())
-
-    @property
-    def progress(self):
-        return self.sessions_done / self.settings.repeatsCount
 
     def __str__(self):
         return self.name

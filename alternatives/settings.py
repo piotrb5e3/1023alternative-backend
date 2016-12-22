@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'experiment',
-    'experiment_preset',
     'experiment_session',
     'experiment_event',
 ]
