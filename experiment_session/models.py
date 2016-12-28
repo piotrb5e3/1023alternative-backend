@@ -26,10 +26,11 @@ class ExperimentSession(models.Model):
     userage = models.IntegerField(blank=True, null=True, validators=(MinValueValidator(1),))
     usersex = models.CharField(blank=True, null=True, choices=_SEX_CHOICES, max_length=1)
     userpass = models.CharField(max_length=30)
+    showtraining = models.BooleanField(default=True)
 
     @property
     def progress(self):
-        return Combination.all.filter(repeat__session=self).count() / (experiment.repeatscount * 1023)
+        return Combination.all.filter(repeat__session=self).count() / (self.experiment.repeatscount * 1023)
 
     def __str__(self):
         return str(self.experiment) + ' (' + self.userid + ')'
