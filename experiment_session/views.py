@@ -1,7 +1,8 @@
+import random
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from experiment_session.models import ExperimentSession, STATUS_FINISHED
+from experiment_session.models import ExperimentSession, Repeat, Combination, STATUS_FINISHED, STATUS_IN_PROGRESS
 from experiment_session.serializers import ExperimentSessionSerializer
 
 
@@ -11,20 +12,24 @@ class ExperimentSessionViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.AllowAny,)
 
 
-@api_view()
-def get_experiment_settings(request):
+def get_session(request):
     if not ('userid' in request.GET and 'userpass' in request.GET):
-        return Response('No credentials supplied', status=status.HTTP_401_UNAUTHORIZED)
+        raise Exception('No credentials supplied')
 
     userid = request.GET['userid']
     userpass = request.GET['userpass']
     session = ExperimentSession.objects.filter(userid=userid, userpass=userpass).first()
     if not session:
-        return Response('No session found', status=status.HTTP_401_UNAUTHORIZED)
+        raise Exception('No session found')
 
     if session.status == STATUS_FINISHED:
-        return Response('Session finished', status=status.HTTP_410_GONE)
+        raise Exception('Session finished')
+    return session
 
+
+@api_view()
+def get_experiment_settings(request):
+    session = get_session(request)
     return Response({
         'sessionId': session.id,
         'audiomode': session.experiment.audiomode,
@@ -33,3 +38,39 @@ def get_experiment_settings(request):
         'askUserData': False if session.userage else True,
         'runTrainingSession': session.showtraining,
     })
+
+
+@api_view()
+def get_lightset(request):
+    try:
+        session = get_session(request)
+        current_repeat = session.get_current_repeat()
+    except Exception as e:
+        return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+    if current_repeat.combinations.filter(status=STATUS_IN_PROGRESS).count() > 0:
+        return Response('Another combination is in progress', status=status.HTTP_400_BAD_REQUEST)
+    lightsets = set([i for i in range(1, 1024)])
+    used_lightsets = current_repeat.combinations.all()
+    for l in used_lightsets:
+        lightsets.discard(l.lightset)
+    lightset = random.choice(list(lightsets))
+    Combination.objects.create(repeat=current_repeat, lightset=lightset)
+    return Response(lightset)
+
+
+@api_view()
+def pause_current_lightset(request):
+    try:
+        session = get_session(request)
+        current_repeat = session.get_current_repeat()
+    except Exception as e:
+        return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+
+    current_lightset = current_repeat.combinations.filter(status=STATUS_IN_PROGRESS).first()
+
+    if not current_lightset:
+        return Response('No lightset to pause', status=status.HTTP_400_BAD_REQUEST)
+
+    current_lightset.delete()
+
+    return Response('OK')

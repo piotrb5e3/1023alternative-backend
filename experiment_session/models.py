@@ -32,6 +32,14 @@ class ExperimentSession(models.Model):
     def progress(self):
         return Combination.all.filter(repeat__session=self).count() / (self.experiment.repeatscount * 1023)
 
+    def get_current_repeat(self):
+        repeats_count = self.repeats.count()
+        current_repeat = Repeat.objects.filter(session=self, status=STATUS_IN_PROGRESS).first()
+        if not current_repeat:
+            current_repeat = Repeat.objects.create(session=self, number=repeats_count + 1)
+
+        return current_repeat
+
     def __str__(self):
         return str(self.experiment) + ' (' + self.userid + ')'
 
