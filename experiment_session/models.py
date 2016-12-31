@@ -1,4 +1,4 @@
-import time
+from datetime import datetime
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
@@ -45,6 +45,8 @@ class ExperimentSession(models.Model):
         repeats_count = self.repeats.count()
         current_repeat = Repeat.objects.filter(session=self, status=STATUS_IN_PROGRESS).first()
         if not current_repeat:
+            if repeats_count >= self.experiment.repeatscount:
+                raise Exception('Repeatscount exhausted. Something went wrong!')
             current_repeat = Repeat.objects.create(session=self, number=repeats_count + 1)
 
         return current_repeat
@@ -61,7 +63,7 @@ class ExperimentSession(models.Model):
             self.finish()
 
     def finish(self):
-        self.finishedon = time.time()
+        self.finishedon = datetime.now()
         self.status = STATUS_FINISHED
         self.save()
 
@@ -97,7 +99,7 @@ class Repeat(models.Model):
             self.finish()
 
     def finish(self):
-        self.finishedon = time.time()
+        self.finishedon = datetime.now()  # suspicious
         self.status = STATUS_FINISHED
         self.save()
         self.session.on_subpart_finish()

@@ -16,7 +16,10 @@ class ExperimentSessionViewSet(viewsets.ModelViewSet):
 
 @api_view()
 def get_experiment_settings(request):
-    session = get_session(request)
+    try:
+        session = get_session(request)
+    except Exception as e:
+        return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
     return Response({
         'sessionId': session.id,
         'audiomode': session.experiment.audiomode,
