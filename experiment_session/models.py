@@ -31,7 +31,8 @@ class ExperimentSession(models.Model):
 
     @property
     def progress(self):
-        return Combination.all.filter(repeat__session=self).count() / (self.experiment.repeatscount * 1023)
+        finished = Combination.objects.filter(repeat__session=self, status=STATUS_FINISHED).count()
+        return finished / (self.experiment.repeatscount * 1023)
 
     def get_current_repeat(self):
         repeats_count = self.repeats.count()
