@@ -64,3 +64,27 @@ def pause_current_lightset(request):
     current_lightset.delete()
 
     return Response('OK')
+
+
+@api_view()
+def report_user_data(request):
+    try:
+        session = get_session(request)
+    except Exception as e:
+        return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+    if session.username:
+        return Response('User data already registered', status=status.HTTP_400_BAD_REQUEST)
+
+    username = request.GET['username']
+    userage = request.GET['userage']
+    usersex = request.GET['usersex']
+
+    if not (username and userage and usersex):
+        return Response('Missing part of user data', status=status.HTTP_400_BAD_REQUEST)
+
+    session.username = username
+    session.userage = userage
+    session.usersex = usersex
+    session.save()
+
+    return Response('OK')
