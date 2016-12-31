@@ -5,26 +5,13 @@ from rest_framework.response import Response
 from experiment_session.models import ExperimentSession, Repeat, Combination, STATUS_FINISHED, STATUS_IN_PROGRESS
 from experiment_session.serializers import ExperimentSessionSerializer
 
+from common.views import get_session
+
 
 class ExperimentSessionViewSet(viewsets.ModelViewSet):
     queryset = ExperimentSession.objects.all()
     serializer_class = ExperimentSessionSerializer
     permission_classes = (permissions.AllowAny,)
-
-
-def get_session(request):
-    if not ('userid' in request.GET and 'userpass' in request.GET):
-        raise Exception('No credentials supplied')
-
-    userid = request.GET['userid']
-    userpass = request.GET['userpass']
-    session = ExperimentSession.objects.filter(userid=userid, userpass=userpass).first()
-    if not session:
-        raise Exception('No session found')
-
-    if session.status == STATUS_FINISHED:
-        raise Exception('Session finished')
-    return session
 
 
 @api_view()
@@ -44,7 +31,7 @@ def get_experiment_settings(request):
 def get_lightset(request):
     try:
         session = get_session(request)
-        current_repeat = session.get_current_repeat()
+        current_repeat = session.get_or_create_current_repeat()
     except Exception as e:
         return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
     if current_repeat.combinations.filter(status=STATUS_IN_PROGRESS).count() > 0:
@@ -62,7 +49,7 @@ def get_lightset(request):
 def pause_current_lightset(request):
     try:
         session = get_session(request)
-        current_repeat = session.get_current_repeat()
+        current_repeat = session.get_or_create_current_repeat()
     except Exception as e:
         return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 

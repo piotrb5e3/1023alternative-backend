@@ -1,3 +1,4 @@
+import time
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
@@ -36,12 +37,42 @@ class ExperimentSession(models.Model):
         repeats_count = self.repeats.count()
         current_repeat = Repeat.objects.filter(session=self, status=STATUS_IN_PROGRESS).first()
         if not current_repeat:
+            raise Exception('No currently open reeat')
+        return current_repeat
+
+    def get_or_create_current_repeat(self):
+        repeats_count = self.repeats.count()
+        current_repeat = Repeat.objects.filter(session=self, status=STATUS_IN_PROGRESS).first()
+        if not current_repeat:
             current_repeat = Repeat.objects.create(session=self, number=repeats_count + 1)
 
         return current_repeat
 
+    def get_current_lightset(self):
+        current_repeat = self.get_current_repeat()
+        return current_repeat.get_current_lightset()
+
     def __str__(self):
         return str(self.experiment) + ' (' + self.userid + ')'
+
+    def on_subpart_finish(self):
+        if self.repeats.filter(status=STATUS_FINISHED).count() >= self.experiment.repeatscount:
+            self.finish()
+
+    def finish(self):
+        self.finishedon = time.time()
+        self.status = STATUS_FINISHED
+        self.save()
+
+    @classmethod
+    def from_creds(cls, userid, userpass):
+        session = cls.objects.filter(userid=userid, userpass=userpass).first()
+        if not session:
+            raise Exception('No session found')
+
+        if session.status == STATUS_FINISHED:
+            raise Exception('Session finished')
+        return session
 
 
 class Repeat(models.Model):
@@ -53,6 +84,22 @@ class Repeat(models.Model):
 
     def __str__(self):
         return str(self.session) + '[' + str(self.number) + ']'
+
+    def get_current_lightset(self):
+        current_lightset = self.combinations.filter(status=STATUS_IN_PROGRESS).first()
+        if not current_lightset:
+            raise Exception('No current lightset')
+        return current_lightset
+
+    def on_subpart_finish(self):
+        if self.combinations.filter(status=STATUS_FINISHED).count() >= 1023:
+            self.finish()
+
+    def finish(self):
+        self.finishedon = time.time()
+        self.status = STATUS_FINISHED
+        self.save()
+        self.session.on_subpart_finish()
 
     class Meta:
         unique_together = ('session', 'number')
@@ -70,6 +117,11 @@ class Combination(models.Model):
 
     def __str__(self):
         return str(self.repeat) + ' : ' + str(self.lightset)
+
+    def finish(self):
+        self.status = STATUS_FINISHED
+        self.save()
+        self.repeat.on_subpart_finish()
 
     class Meta:
         unique_together = ('repeat', 'lightset')
