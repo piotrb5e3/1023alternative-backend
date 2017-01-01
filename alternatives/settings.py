@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'experiment',
     'experiment_session',
     'experiment_event',
+    'experiment_report',
 ]
 
 MIDDLEWARE = [
