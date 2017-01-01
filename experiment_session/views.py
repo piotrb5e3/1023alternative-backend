@@ -88,3 +88,18 @@ def report_user_data(request):
     session.save()
 
     return Response('OK')
+
+
+@api_view()
+def report_training_finished(request):
+    try:
+        session = get_session(request)
+    except Exception as e:
+        return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+    if not session.showtraining:
+        return Response('Training session already done', status=status.HTTP_400_BAD_REQUEST)
+
+    session.showtraining = False;
+    session.save()
+
+    return Response('OK')
