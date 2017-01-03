@@ -1,9 +1,13 @@
 import random
+
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
 from experiment_session.models import ExperimentSession, Repeat, Combination, STATUS_FINISHED, STATUS_IN_PROGRESS
 from experiment_session.serializers import ExperimentSessionSerializer
+
+from experiment.models import Experiment
 
 from common.views import get_session
 
@@ -99,7 +103,29 @@ def report_training_finished(request):
     if not session.showtraining:
         return Response('Training session already done', status=status.HTTP_400_BAD_REQUEST)
 
-    session.showtraining = False;
+    session.showtraining = False
     session.save()
 
     return Response('OK')
+
+
+@api_view()
+def create_sessions(request):
+    if 'count' not in request.GET or 'experiment_id' not in request.GET:
+        return Response('Missing parameters', status=status.HTTP_400_BAD_REQUEST)
+
+    count = int(request.GET['count'])
+    if count < 1:
+        return Response('Count must be positive', status=status.HTTP_400_BAD_REQUEST)
+
+    experiment_id = int(request.GET['experiment_id'])
+    try:
+        experiment = Experiment.objects.get(id=experiment_id)
+    except Experiment.DoesNotExist as e:
+        return Response('No such experiment', status=status.HTTP_400_BAD_REQUEST)
+
+    result = map(lambda session: (session.userid, session.userpass),
+                 map(lambda x: ExperimentSession.create_new(experiment),
+                     range(count)))
+
+    return Response(result)

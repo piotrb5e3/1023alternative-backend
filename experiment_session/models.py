@@ -2,6 +2,8 @@ from datetime import datetime
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
+from experiment_session.utils import random_alphanumeric
+
 STATUS_FINISHED = 'F'
 STATUS_IN_PROGRESS = 'P'
 _STATUS_CHOICES = (
@@ -76,6 +78,23 @@ class ExperimentSession(models.Model):
         if session.status == STATUS_FINISHED:
             raise Exception('Session finished')
         return session
+
+    @classmethod
+    def create_new(cls, experiment):
+        uid_length = 7
+        passwd_length = 8
+        userid = random_alphanumeric(length=uid_length)
+        counter = 10
+        while cls.objects.filter(userid=userid).count() > 0:
+            counter -= 1
+            if counter <= 0:
+                counter = 10
+                uid_length += 1
+            userid = random_alphanumeric(length=uid_length)
+
+        userpass = random_alphanumeric(length=passwd_length)
+
+        return cls.objects.create(userid=userid, userpass=userpass, experiment=experiment)
 
 
 class Repeat(models.Model):
