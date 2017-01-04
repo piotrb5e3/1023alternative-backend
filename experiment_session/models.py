@@ -76,7 +76,7 @@ class ExperimentSession(models.Model):
             raise Exception('No session found')
 
         if session.status == STATUS_FINISHED:
-            raise Exception('Session finished')
+            raise Exception('Experiment finished')
         return session
 
     @classmethod

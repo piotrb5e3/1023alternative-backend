@@ -4,7 +4,7 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from experiment_session.models import ExperimentSession, Repeat, Combination, STATUS_FINISHED, STATUS_IN_PROGRESS
+from experiment_session.models import ExperimentSession, Combination, STATUS_IN_PROGRESS
 from experiment_session.serializers import ExperimentSessionSerializer
 
 from experiment.models import Experiment

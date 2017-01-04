@@ -33,6 +33,7 @@ def report_finish_display(request):
         current_lightset.finish()
     except Exception as e:
         return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+    session.refresh_from_db()
     if session.status == STATUS_IN_PROGRESS:
         return Response('OK')
     else:
