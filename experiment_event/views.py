@@ -6,6 +6,8 @@ from common.views import get_session
 
 from experiment_event.models import Event
 
+from experiment_session.models import STATUS_IN_PROGRESS
+
 numberToCode = {i: 'bp' + str(i) for i in range(1, 11)}
 numberToCode[-1] = 'ibp'
 
@@ -31,7 +33,10 @@ def report_finish_display(request):
         current_lightset.finish()
     except Exception as e:
         return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
-    return Response('OK')
+    if session.status == STATUS_IN_PROGRESS:
+        return Response('OK')
+    else:
+        return Response('FIN')
 
 
 @api_view()
