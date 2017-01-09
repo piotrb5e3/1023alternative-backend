@@ -40,5 +40,9 @@ class Experiment(models.Model):
 
     createdon = models.DateTimeField(auto_now_add=True, editable=False)
 
+    traininglength = models.IntegerField(validators=(MinValueValidator(0),))
+
+    instructions = models.CharField(max_length=10000, default='')
+
     def __str__(self):
         return self.name

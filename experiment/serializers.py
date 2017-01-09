@@ -7,7 +7,7 @@ class ExperimentSerializer(serializers.ModelSerializer):
     class Meta(object):
         model = Experiment
         fields = ('id', 'name', 'lightoffmode', 'lightofftimeout', 'audiomode', 'repeatscount',
-                  'sessions',)
+                  'sessions', 'traininglength', 'instructions')
         include = {
             'sessions': ExperimentSessionSerializer()
         }
