@@ -29,6 +29,8 @@ def get_experiment_settings(request):
         'audiomode': session.experiment.audiomode,
         'lightoffmode': session.experiment.lightoffmode,
         'lightofftimeout': session.experiment.lightofftimeout,
+        'traininglength': session.experiment.traininglength,
+        'instructions': session.experiment.instructions,
         'askUserData': False if session.userage else True,
         'runTrainingSession': session.showtraining,
     })
