@@ -42,7 +42,7 @@ class Experiment(models.Model):
 
     traininglength = models.IntegerField(validators=(MinValueValidator(0),))
 
-    instructions = models.CharField(max_length=10000, default='')
+    instructions = models.CharField(max_length=10000, blank=True)
 
     def __str__(self):
         return self.name
