@@ -5,3 +5,5 @@ djangorestframework==3.5.3
 djangorestframework-jsonapi==2.1.1
 drf-jsonapi==0.1.6
 inflection==0.3.1
+python-slugify==1.2.1
+Unidecode==0.4.20
