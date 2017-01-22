@@ -69,6 +69,9 @@ class ExperimentSession(models.Model):
         self.status = STATUS_FINISHED
         self.save()
 
+    def is_unused(self):
+        return not self.userage
+
     @classmethod
     def from_creds(cls, userid, userpass):
         session = cls.objects.filter(userid=userid, userpass=userpass).first()

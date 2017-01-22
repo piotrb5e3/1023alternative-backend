@@ -1,5 +1,4 @@
 import csv
-
 from io import StringIO
 from slugify import slugify
 from django.http import StreamingHttpResponse, HttpResponse
